@@ -4,13 +4,17 @@ import { notFound } from 'next/navigation'
 import EditIssueButton from './EditIssueButton'
 import IssueDetails from './IssueDetails'
 import DeleteIssueButton from './DeleteIssueButton'
+import { getServerSession } from 'next-auth'
+import authOptins from '@/app/auth/authOptions'
 
 interface Props {
     params: Promise<{ id: string }>
 }
 
 const IssueDetailPage = async ({ params }: Props) => {
-    // Await the params object first
+    const session = await getServerSession(authOptins)
+    
+
     const { id } = await params
 
     const issue = await prisma.issues.findUnique({
@@ -25,12 +29,12 @@ const IssueDetailPage = async ({ params }: Props) => {
             <Box className='md:col-span-4'>
                 <IssueDetails issue={issue} />
             </Box>
-            <Box>
+            {session && <Box>
                 <Flex direction={'column'} gap={'4'}>
                     <EditIssueButton issueId={issue.id} />
                     <DeleteIssueButton issueId={issue.id} />
                 </Flex>
-            </Box>
+            </Box>}
         </Grid>
     )
 }
