@@ -17,7 +17,10 @@ const IssuePage = async ({ searchParams }: Props) => {
     value: keyof Issues;
     className?: string
   }[] = [
-      { label: 'Issue', value: 'title' },
+      {
+        label: 'Issue',
+        value: 'title'
+      },
       {
         label: 'Status',
         value: 'status',
@@ -31,14 +34,21 @@ const IssuePage = async ({ searchParams }: Props) => {
     ]
 
   const statuses = Object.values(Status)
-  const status = statuses.includes((await searchParams).status)
-    ? (await searchParams).status
+  const status = statuses.includes(newParams.status)
+    ? newParams.status
+    : undefined
+
+  const orderBy = columns
+    .map(column => column.value)
+    .includes(newParams.orderBy)
+    ? { [newParams.orderBy]: 'asc' }
     : undefined
 
   const issues = await prisma.issues.findMany({
     where: {
       status: status
-    }
+    },
+    orderBy
   })
 
   return (
@@ -53,7 +63,7 @@ const IssuePage = async ({ searchParams }: Props) => {
               }}>
                 {column.label}
               </NextLink>
-              {column.value === newParams.orderBy && <ArrowUpIcon className="inline"/>}
+              {column.value === newParams.orderBy && <ArrowUpIcon className="inline" />}
             </Table.ColumnHeaderCell>)}
           </Table.Row>
         </Table.Header>
