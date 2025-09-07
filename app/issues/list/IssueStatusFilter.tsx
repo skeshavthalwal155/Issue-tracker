@@ -2,7 +2,7 @@
 
 import { Status } from '@/app/generated/prisma'
 import { Select } from '@radix-ui/themes'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const statuses: { id: number, label: string, value?: Status }[] = [
     { id: 1, label: "All" },
@@ -11,14 +11,22 @@ const statuses: { id: number, label: string, value?: Status }[] = [
     { id: 4, label: "Closed", value: "CLOSED" }
 ]
 
-const IssueStateFilter = () => {
-    const router= useRouter()
+const IssueStatusFilter = () => {
+    const router = useRouter()
+    const searchParams = useSearchParams()
 
     return (
-        <Select.Root onValueChange={(status)=>{
-            const query = status!=='all' ? `?status=${status}` : ''
+
+        <Select.Root defaultValue={searchParams.get('status')! || 'all'} onValueChange={(status) => {
+
+            const params = new URLSearchParams()
+            if (status && status !== 'all')
+                params.append('status', status)
+            if (searchParams.get('orderBy'))
+                params.append('orderBy', searchParams.get('orderBy')!)
+            const query = params.size ? '?' + params.toString() : ''
             router.push('/issues/list' + query)
-        } }>
+        }}>
             <Select.Trigger placeholder='Filter By Status...' />
             <Select.Content>
                 {statuses.map(status => (
@@ -26,10 +34,9 @@ const IssueStateFilter = () => {
                         {status.label}
                     </Select.Item>
                 ))}
-
             </Select.Content>
         </Select.Root>
     )
 }
 
-export default IssueStateFilter
+export default IssueStatusFilter
