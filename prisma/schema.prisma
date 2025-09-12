@@ -6,12 +6,13 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
+  output   = "../app/generated/prisma"  
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+
 }
 
 model Issues {
@@ -23,6 +24,7 @@ model Issues {
   updatedAt        DateTime @updatedAt
   assignedToUserId String?  @db.VarChar(255)
   assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id])
+ 
 }
 
 enum Status {
