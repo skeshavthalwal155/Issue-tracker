@@ -46,7 +46,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 }
 
 export async function DELETE(request: NextRequest,
-    { params }: Props }) {
+    { params }: Props ) {
 
     const session = await getServerSession(authOptins)
     if (!session)
